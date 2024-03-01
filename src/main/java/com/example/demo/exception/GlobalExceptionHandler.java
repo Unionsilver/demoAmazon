@@ -6,44 +6,51 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+// Класс для глобальной обработки исключений в приложении
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    // Обработка исключения, когда пользователь уже существует в базе данных
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<?> handleUserAlreadyExistsException(UserAlreadyExistsException e, WebRequest request) {
+        // Создание объекта ErrorDetails с информацией об ошибке
         ErrorDetails errorDetails = new ErrorDetails(
-                HttpStatus.BAD_REQUEST.value(),
-                e.getMessage(),
-                request.getDescription(false)
+                HttpStatus.BAD_REQUEST.value(), // Статус код ошибки
+                e.getMessage(), // Сообщение об ошибке
+                request.getDescription(false) // Детали запроса, который привел к ошибке
         );
+        // Возвращение ответа с указанием статуса ошибки и информацией об ошибке
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
-    // Класс для деталей ошибки
+    // Внутренний класс для передачи информации об ошибке клиенту
     private static class ErrorDetails {
-        private int statusCode;
-        private String message;
-        private String details;
+        private int statusCode; // HTTP статус код ошибки
+        private String message; // Сообщение об ошибке
+        private String details; // Детали ошибки
 
+        // Конструктор класса ErrorDetails
         public ErrorDetails(int statusCode, String message, String details) {
             this.statusCode = statusCode;
             this.message = message;
             this.details = details;
         }
 
-        // Геттеры
+        // Геттер для получения статус кода ошибки
         public int getStatusCode() {
             return statusCode;
         }
 
+        // Геттер для получения сообщения об ошибке
         public String getMessage() {
             return message;
         }
 
+        // Геттер для получения деталей ошибки
         public String getDetails() {
             return details;
         }
     }
 
-    // Другие обработчики исключений...
+    // Место для добавления других обработчиков исключений...
 }

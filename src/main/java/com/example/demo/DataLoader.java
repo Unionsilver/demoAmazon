@@ -32,31 +32,30 @@ public class DataLoader {
 
     @PostConstruct
     public void loadData() {
-        loadSalesTrafficData();
-        loadSaleStatisticsData();
+        loadSalesTrafficData(); // Загрузка данных о трафике продаж
+        loadSaleStatisticsData(); // Загрузка статистики продаж
     }
 
     private void loadSalesTrafficData() {
-        Resource resource = new ClassPathResource("test_report.json");
-        try (InputStream inputStream = resource.getInputStream()) {
-            List<SalesTraffic> dataList = objectMapper.readValue(inputStream, new TypeReference<List<SalesTraffic>>(){});
-            salesTrafficRepository.saveAll(dataList);
-            logger.info("Sales traffic data loaded successfully.");
-        } catch (IOException e) {
-            logger.error("Error loading sales traffic data", e);
+        Resource resource = new ClassPathResource("test_report.json"); // Загрузка ресурса - файла JSON из classpath
+        try (InputStream inputStream = resource.getInputStream()) { // Открытие потока чтения файла
+            List<SalesTraffic> dataList = objectMapper.readValue(inputStream, new TypeReference<List<SalesTraffic>>(){}); // Чтение JSON и преобразование его в список объектов SalesTraffic
+            salesTrafficRepository.saveAll(dataList); // Сохранение списка объектов SalesTraffic в репозитории
+            logger.info("Sales traffic data loaded successfully."); // Логирование успешной загрузки данных о трафике продаж
+        } catch (IOException e) { // Обработка исключений ввода-вывода
+            logger.error("Error loading sales traffic data", e); // Логирование ошибки при загрузке данных о трафике продаж
         }
     }
 
     private void loadSaleStatisticsData() {
-        Resource resource = new ClassPathResource("test_report.json");
-        try (InputStream inputStream = resource.getInputStream()) {
-            List<SaleStatistics> dataList = objectMapper.readValue(inputStream, new TypeReference<List<SaleStatistics>>(){});
-            saleStatisticsRepository.saveAll(dataList);
-            logger.info("Sale statistics data loaded successfully.");
-        } catch (IOException e) {
-            logger.error("Error loading sale statistics data", e);
+        Resource resource = new ClassPathResource("test_report.json"); // Загрузка ресурса - файла JSON из classpath
+        try (InputStream inputStream = resource.getInputStream()) { // Открытие потока чтения файла
+            List<SaleStatistics> dataList = objectMapper.readValue(inputStream, new TypeReference<List<SaleStatistics>>(){}); // Чтение JSON и преобразование его в список объектов SaleStatistics
+            saleStatisticsRepository.saveAll(dataList); // Сохранение списка объектов SaleStatistics в репозитории
+            logger.info("Sale statistics data loaded successfully."); // Логирование успешной загрузки статистики продаж
+        } catch (IOException e) { // Обработка исключений ввода-вывода
+            logger.error("Error loading sale statistics data", e); // Логирование ошибки при загрузке статистики продаж
         }
     }
 
 }
-

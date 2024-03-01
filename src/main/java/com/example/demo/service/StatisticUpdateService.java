@@ -4,31 +4,33 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+// Сервис для обновления статистики продаж
 @Service
 public class StatisticUpdateService {
 
-    private final StatisticService statisticService;
+    private final StatisticService statisticService; // Ссылка на сервис статистики для возможного взаимодействия
 
+    // Внедрение зависимости StatisticService через конструктор
     public StatisticUpdateService(StatisticService statisticService) {
         this.statisticService = statisticService;
     }
 
-    // Метод для обновления статистики из файла "test_report.json"
+    // Приватный метод для обновления статистики из файла "test_report.json"
     private void updateStatisticsFromJsonFile() {
-        // Логика обновления статистики из файла
+        // Здесь реализуется логика обновления статистики из файла
         System.out.println("Updating statistics from test_report.json...");
     }
 
-    // Аннотация @Scheduled для запуска метода updateStatisticsFromJsonFile
-    // через определенные интервалы времени
-    @Scheduled(fixedRate = 60000) // обновление каждую минуту (60000 миллисекунд)
+    // Метод для периодического выполнения обновления статистики. Запускается по расписанию.
+    @Scheduled(fixedRate = 60000) // Запуск метода каждые 60000 мс (1 минута)
     public void scheduleUpdate() {
-        updateStatisticsFromJsonFile();
+        updateStatisticsFromJsonFile(); // Вызов метода обновления статистики
     }
 
-    // Метод для инвалидации кэша после обновления статистики
-    @CacheEvict(value = {"statisticsByDate", "statisticsByAsin"}, allEntries = true)
+    // Метод для очистки кэша после обновления статистики
+    @CacheEvict(value = {"statisticsByDate", "statisticsByAsin"}, allEntries = true) // Инвалидация всех записей в кэше
     public void evictCache() {
-        // Метод для инвалидации кэша
+        // Логика инвалидации кэша
+        // Данный метод может быть вызван после обновления статистики для гарантии актуальности данных
     }
 }

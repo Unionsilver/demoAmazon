@@ -20,18 +20,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api")
+@RestController // Обозначает класс как контроллер, готовый обрабатывать web-запросы.
+@RequestMapping("/api") // Устанавливает базовый путь для всех методов контроллера.
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class); // Логгер для записи информации о событиях в системе.
 
-    private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailsService userDetailsService;
-    private final JwtUtil jwtUtil;
-    private final UserService userService;
+    private final AuthenticationManager authenticationManager; // Менеджер аутентификации для Spring Security.
+    private final CustomUserDetailsService userDetailsService; // Сервис для загрузки данных пользователя.
+    private final JwtUtil jwtUtil; // Утилита для работы с JWT.
+    private final UserService userService; // Сервис для работы с пользователями.
 
-    @Autowired
+    @Autowired // Автоматическое внедрение зависимостей через конструктор.
     public AuthController(AuthenticationManager authenticationManager,
                           CustomUserDetailsService userDetailsService,
                           JwtUtil jwtUtil,
@@ -42,38 +42,38 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/public/authenticate")
+    @PostMapping("/public/authenticate") // Метод обрабатывает POST запросы на "/api/public/authenticate".
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
-        logger.info("Authentication request for user: {}", authenticationRequest.getUsername());
+        logger.info("Authentication request for user: {}", authenticationRequest.getUsername()); // Логирование запроса аутентификации.
         try {
             Authentication authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
-            );
-            SecurityContextHolder.getContext().setAuthentication(authenticate);
-            logger.info("Authentication successful for user: {}", authenticationRequest.getUsername());
+            ); // Попытка аутентификации пользователя.
+            SecurityContextHolder.getContext().setAuthentication(authenticate); // Установка аутентификации в контексте безопасности.
+            logger.info("Authentication successful for user: {}", authenticationRequest.getUsername()); // Логирование успешной аутентификации.
         } catch (Exception e) {
-            logger.error("Authentication failed for user: {}. Error: {}", authenticationRequest.getUsername(), e.getMessage());
-            return ResponseEntity.badRequest().body("Incorrect username or password");
+            logger.error("Authentication failed for user: {}. Error: {}", authenticationRequest.getUsername(), e.getMessage()); // Логирование неудачной попытки аутентификации.
+            return ResponseEntity.badRequest().body("Incorrect username or password"); // Возврат ответа с ошибкой.
         }
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-        final String jwt = jwtUtil.generateToken(userDetails.getUsername());
-        logger.info("JWT token generated for user: {}", authenticationRequest.getUsername());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername()); // Загрузка данных пользователя.
+        final String jwt = jwtUtil.generateToken(userDetails.getUsername()); // Генерация JWT.
+        logger.info("JWT token generated for user: {}", authenticationRequest.getUsername()); // Логирование создания токена.
 
-        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        return ResponseEntity.ok(new AuthenticationResponse(jwt)); // Возврат JWT в ответе.
     }
 
-    @PostMapping("/public/register")
+    @PostMapping("/public/register") // Метод обрабатывает POST запросы на "/api/public/register".
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
-            User registeredUser = userService.registerNewUser(user);
-            final UserDetails userDetails = userDetailsService.loadUserByUsername(registeredUser.getUsername());
-            final String jwt = jwtUtil.generateToken(userDetails.getUsername());
-            logger.info("Registered and authenticated user: {}", registeredUser.getUsername());
-            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+            User registeredUser = userService.registerNewUser(user); // Регистрация нового пользователя.
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(registeredUser.getUsername()); // Загрузка данных пользователя.
+            final String jwt = jwtUtil.generateToken(userDetails.getUsername()); // Генерация JWT для нового пользователя.
+            logger.info("Registered and authenticated user: {}", registeredUser.getUsername()); // Логирование регистрации пользователя.
+            return ResponseEntity.ok(new AuthenticationResponse(jwt)); // Возврат JWT в ответе.
         } catch (Exception e) {
-            logger.error("Registration failed for user: {}. Error: {}", user.getUsername(), e.getMessage());
-            return ResponseEntity.badRequest().body("Registration error: " + e.getMessage());
+            logger.error("Registration failed for user: {}. Error: {}", user.getUsername(), e.getMessage()); // Логирование ошибки регистрации.
+            return ResponseEntity.badRequest().body("Registration error: " + e.getMessage()); // Возврат ответа с ошибкой.
         }
     }
 }

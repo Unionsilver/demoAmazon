@@ -10,17 +10,17 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Configuration
-@EnableWebSecurity
+@Configuration // Определяет класс как источник конфигурации бинов для контекста приложения.
+@EnableWebSecurity // Включает поддержку безопасности веб-сервисов Spring Security.
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Bean
+    @Bean // Объявляет бин для кодировщика паролей, использующий BCrypt хеш-функцию.
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Override
-    @Bean
+    @Bean // Переопределяет бин для менеджера аутентификации, чтобы его можно было автоматически внедрять в другие части приложения.
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
@@ -28,13 +28,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and()
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/public/**").permitAll()
-                .anyRequest().authenticated()
+                .cors().and() // Позволяет запросам из разных источников обращаться к приложению.
+                .csrf().disable() // Отключает межсайтовую подделку запроса (CSRF) защиту, что упрощает разработку.
+                .authorizeRequests() // Начинает определение того, какие URL требуют аутентификации.
+                .antMatchers("/api/public/**").permitAll() // Разрешает полный доступ к путям, соответствующим шаблону "/api/public/**".
+                .anyRequest().authenticated() // Требует аутентификации для любых других запросов.
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement() // Настраивает управление сессией.
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Приложение не будет использовать сессии для хранения состояния пользователя.
     }
 }

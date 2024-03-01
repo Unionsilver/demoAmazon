@@ -7,28 +7,28 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+// Указывает, что данный класс является документом MongoDB и будет храниться в коллекции "users"
 @Document(collection = "users")
 public class User {
 
-    @Id
+    @Id // Указывает, что поле является идентификатором документа
     private String id;
-    private String username;
-    private String password;
-    private Set<String> roles = new HashSet<>(); // Добавление списка ролей
+    private String username; // Имя пользователя
+    private String password; // Пароль пользователя, будет храниться в зашифрованном виде
+    private Set<String> roles = new HashSet<>(); // Набор ролей пользователя
 
-    // Безаргументный конструктор для использования Spring Data
+    // Безаргументный конструктор необходим для работы с библиотеками Spring Data
     public User() {
     }
 
-    // Конструктор с параметрами для удобства создания экземпляров
+    // Конструктор с параметрами для удобства создания экземпляров класса
     public User(String username, String password, Set<String> roles) {
         this.username = username;
         this.password = password;
-        this.roles = roles;
+        this.roles = roles; // Инициализация набора ролей пользователя
     }
 
-    // Getters and Setters
-
+    // Геттеры и сеттеры для доступа к полям класса
     public String getId() {
         return id;
     }
@@ -58,12 +58,10 @@ public class User {
     }
 
     public void setRoles(Set<String> roles) {
-        this.roles = roles;
+        this.roles = roles; // Установка набора ролей пользователя
     }
 
-    // Переопределенные методы equals и hashCode
-    // Включите поле roles в методы equals и hashCode
-
+    // Переопределение метода equals для сравнения объектов User
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -72,24 +70,23 @@ public class User {
         return Objects.equals(id, user.id) &&
                 Objects.equals(username, user.username) &&
                 Objects.equals(password, user.password) &&
-                Objects.equals(roles, user.roles);
+                Objects.equals(roles, user.roles); // Включение ролей в сравнение
     }
 
+    // Переопределение метода hashCode для генерации хеш-кода объекта User
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, roles);
+        return Objects.hash(id, username, password, roles); // Включение ролей в хеш-код
     }
 
-    // Переопределенный метод toString
-    // Обновите метод toString, чтобы включить информацию о ролях
-
+    // Переопределение метода toString для представления объекта User в виде строки
     @Override
     public String toString() {
         return "User{" +
                 "id='" + id + '\'' +
                 ", username='" + username + '\'' +
-                ", password='[PROTECTED]'" + // Защита пароля
-                ", roles=" + roles +
+                ", password='[PROTECTED]'" + // Защита пароля от вывода
+                ", roles=" + roles + // Вывод списка ролей
                 '}';
     }
 }

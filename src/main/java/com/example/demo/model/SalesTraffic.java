@@ -11,22 +11,26 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 import java.util.StringJoiner;
 
+// Аннотация для указания, что класс является документом MongoDB и будет храниться в коллекции "salesTraffic"
 @Document(collection = "salesTraffic")
+// Аннотация для игнорирования неизвестных свойств при десериализации JSON, что полезно при работе с внешними API
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Data
-@NoArgsConstructor
+@Data // Генерация геттеров, сеттеров, методов toString(), equals() и hashCode() с помощью библиотеки Lombok
+@NoArgsConstructor // Генерация конструктора без аргументов
 public class SalesTraffic {
-    @Id
-    private String id;
-    private List<SalesAndTrafficByDate> salesAndTrafficByDate;
-    private List<SalesAndTrafficByAsin> salesAndTrafficByAsin;
+    @Id // Указывает, что поле является идентификатором документа в MongoDB
+    private String id; // Уникальный идентификатор записи о трафике продаж
+    private List<SalesAndTrafficByDate> salesAndTrafficByDate; // Список данных о продажах и трафике по датам
+    private List<SalesAndTrafficByAsin> salesAndTrafficByAsin; // Список данных о продажах и трафике по ASIN
 
+    // Конструктор с параметрами для инициализации объекта
     public SalesTraffic(String id, List<SalesAndTrafficByDate> salesAndTrafficByDate, List<SalesAndTrafficByAsin> salesAndTrafficByAsin) {
-        this.id = id;
-        this.salesAndTrafficByDate = salesAndTrafficByDate;
-        this.salesAndTrafficByAsin = salesAndTrafficByAsin;
+        this.id = id; // Установка идентификатора
+        this.salesAndTrafficByDate = salesAndTrafficByDate; // Установка списка данных по датам
+        this.salesAndTrafficByAsin = salesAndTrafficByAsin; // Установка списка данных по ASIN
     }
 
+    // Переопределенный метод toString() для представления объекта в строковом формате
     @Override
     public String toString() {
         return new StringJoiner(", ", SalesTraffic.class.getSimpleName() + "[", "]")
