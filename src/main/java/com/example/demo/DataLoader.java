@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.example.demo.model.SalesTraffic; // Убедитесь, что импортируется правильный путь
+import com.example.demo.model.SaleStatistics; // Предполагается, что у вас есть такой класс
 import com.example.demo.repository.SalesTrafficRepository;
 import com.example.demo.repository.SaleStatisticsRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -31,7 +33,7 @@ public class DataLoader {
     @PostConstruct
     public void loadData() {
         loadSalesTrafficData();
-        loadSaleStatisticsData(); // Аналогичный метод для других данных
+        loadSaleStatisticsData();
     }
 
     private void loadSalesTrafficData() {
@@ -46,7 +48,15 @@ public class DataLoader {
     }
 
     private void loadSaleStatisticsData() {
-        // Аналогичная логика для загрузки данных статистики продаж, если необходимо
-        // Например, использование другого JSON-файла и репозитория saleStatisticsRepository
+        Resource resource = new ClassPathResource("test_report.json");
+        try (InputStream inputStream = resource.getInputStream()) {
+            List<SaleStatistics> dataList = objectMapper.readValue(inputStream, new TypeReference<List<SaleStatistics>>(){});
+            saleStatisticsRepository.saveAll(dataList);
+            logger.info("Sale statistics data loaded successfully.");
+        } catch (IOException e) {
+            logger.error("Error loading sale statistics data", e);
+        }
     }
+
 }
+

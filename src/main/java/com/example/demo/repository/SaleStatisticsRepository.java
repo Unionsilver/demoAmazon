@@ -1,9 +1,13 @@
 package com.example.demo.repository;
 
-
-import com.example.demo.SaleStatistics;
+import com.example.demo.model.SaleStatistics;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.List;
+
+@Repository
 public interface SaleStatisticsRepository extends MongoRepository<SaleStatistics, String> {
-    // Тут можна додати додаткові методи запитів, якщо потрібно
+    List<SaleStatistics> findBySaleDate(LocalDate saleDate);
 }
